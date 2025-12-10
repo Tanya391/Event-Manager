@@ -1,6 +1,6 @@
 // Student Login Page - Two-step OTP login process
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { LogIn, Mail, Hash, KeyRound } from 'lucide-react';

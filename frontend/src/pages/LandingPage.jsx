@@ -1,5 +1,6 @@
 // Landing Page - Home page with login options
 
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GraduationCap, Shield, Calendar, Bell, TrendingUp, Users } from 'lucide-react';
 

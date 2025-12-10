@@ -1,5 +1,7 @@
 // Loading Spinner Component - Shows while data is loading
 
+import React from 'react';
+
 const LoadingSpinner = ({ size = 'medium' }) => {
     const sizeClasses = {
         small: 'w-6 h-6',

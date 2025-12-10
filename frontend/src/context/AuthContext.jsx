@@ -1,7 +1,7 @@
 // Authentication Context - Manages user authentication state across the app
 // This provides login, logout, and user data to all components
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
 
 // Create the context

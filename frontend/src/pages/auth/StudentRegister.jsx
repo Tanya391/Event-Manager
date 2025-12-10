@@ -1,6 +1,6 @@
 // Student Registration Page - Register new student account
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { UserPlus, Mail, User, Hash, Building, Calendar } from 'lucide-react';

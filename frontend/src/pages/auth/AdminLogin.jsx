@@ -1,6 +1,6 @@
 // Admin Login Page - Simple email and password login
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Lock, Mail, LogIn } from 'lucide-react';
