@@ -60,7 +60,7 @@ async function request(method, endpoint, body = null, token = null) {
 async function runTest(name, testFn) {
   results.total++;
   process.stdout.write(`${colors.cyan}[${results.total}]${colors.reset} ${name}... `);
-  
+
   try {
     await testFn();
     results.passed++;
@@ -97,10 +97,10 @@ async function runAllTests() {
 
   await runTest('Admin Login', async () => {
     const res = await request('POST', '/api/auth/admin/login', {
-      email: process.env.ADMIN_DEFAULT_EMAIL || 'admin@test.com',
-      password: process.env.ADMIN_DEFAULT_PASSWORD || 'Admin@123!'
+      email: 'tanyachill@gmail.com',
+      password: 'Admin@123!'
     });
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.data.token, 'Token not returned');
     assert(res.data.admin, 'Admin data not returned');
@@ -113,7 +113,7 @@ async function runAllTests() {
       email: `testadmin${Date.now()}@example.com`,
       password: 'TestAdmin@123'
     });
-    
+
     assert(res.status === 201, `Expected 201, got ${res.status}`);
     assert(res.data.token, 'Token not returned');
   });
@@ -126,7 +126,7 @@ async function runAllTests() {
       department: 'Computer Science',
       year: '2024'
     });
-    
+
     assert(res.status === 201, `Expected 201, got ${res.status}`);
     assert(res.data.student, 'Student data not returned');
     studentId = res.data.student.id;
@@ -137,7 +137,7 @@ async function runAllTests() {
       email: `alice${Date.now()}@student.com`,
       studentId: `CS${Date.now().toString().slice(-6)}`
     });
-    
+
     // Note: This might fail if student doesn't exist from previous test
     // In real scenario, we'd use the actual registered student
     assert(res.status === 200 || res.status === 401, `Unexpected status: ${res.status}`);
@@ -150,14 +150,14 @@ async function runAllTests() {
 
   await runTest('Get Admin Profile', async () => {
     const res = await request('GET', '/api/admin/profile', null, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.data.admin, 'Admin profile not returned');
   });
 
   await runTest('Get All Students (Admin)', async () => {
     const res = await request('GET', '/api/admin/students', null, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.data.students, 'Students array not returned');
   });
@@ -180,7 +180,7 @@ async function runAllTests() {
       location: 'Main Auditorium',
       maxParticipants: 100
     }, adminToken);
-    
+
     assert(res.status === 201, `Expected 201, got ${res.status}: ${JSON.stringify(res.data)}`);
     assert(res.data.event, 'Event data not returned');
     eventId = res.data.event._id;
@@ -188,7 +188,7 @@ async function runAllTests() {
 
   await runTest('Get All Events (Public)', async () => {
     const res = await request('GET', '/api/events');
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(Array.isArray(res.data), 'Events array not returned');
     assert(res.data.length > 0, 'No events returned');
@@ -198,9 +198,9 @@ async function runAllTests() {
     if (!eventId) {
       throw new Error('No event ID available from previous test');
     }
-    
+
     const res = await request('GET', `/api/events/${eventId}`);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.data._id === eventId, 'Wrong event returned');
   });
@@ -209,12 +209,12 @@ async function runAllTests() {
     if (!eventId) {
       throw new Error('No event ID available');
     }
-    
+
     const res = await request('PUT', `/api/events/${eventId}`, {
       title: 'Tech Talk 2024 - Updated',
       maxParticipants: 150
     }, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.data.event.title === 'Tech Talk 2024 - Updated', 'Event not updated');
   });
@@ -223,9 +223,9 @@ async function runAllTests() {
     if (!eventId) {
       throw new Error('No event ID available');
     }
-    
+
     const res = await request('PATCH', `/api/events/${eventId}/cancel`, null, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.data.event.status === 'cancelled', 'Event not cancelled');
   });
@@ -244,7 +244,7 @@ async function runAllTests() {
       message: 'This is a test announcement for automated testing.',
       expiresAt: futureDate.toISOString()
     }, adminToken);
-    
+
     assert(res.status === 201, `Expected 201, got ${res.status}`);
     assert(res.data.announcement, 'Announcement not returned');
     announcementId = res.data.announcement._id;
@@ -252,7 +252,7 @@ async function runAllTests() {
 
   await runTest('Get All Announcements (Public)', async () => {
     const res = await request('GET', '/api/announcements');
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(Array.isArray(res.data), 'Announcements array not returned');
   });
@@ -261,11 +261,11 @@ async function runAllTests() {
     if (!announcementId) {
       throw new Error('No announcement ID available');
     }
-    
+
     const res = await request('PUT', `/api/announcements/${announcementId}`, {
       title: 'Updated Test Announcement'
     }, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
   });
 
@@ -273,9 +273,9 @@ async function runAllTests() {
     if (!announcementId) {
       throw new Error('No announcement ID available');
     }
-    
+
     const res = await request('DELETE', `/api/announcements/${announcementId}`, null, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
   });
 
@@ -286,7 +286,7 @@ async function runAllTests() {
 
   await runTest('Get Dashboard Stats', async () => {
     const res = await request('GET', '/api/analytics/dashboard', null, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(typeof res.data.totalStudents === 'number', 'Invalid stats format');
     assert(typeof res.data.totalEvents === 'number', 'Invalid stats format');
@@ -294,21 +294,21 @@ async function runAllTests() {
 
   await runTest('Get Popular Events', async () => {
     const res = await request('GET', '/api/analytics/events/popular?limit=5', null, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.data.events, 'Events not returned');
   });
 
   await runTest('Get Student Engagement', async () => {
     const res = await request('GET', '/api/analytics/students/engagement', null, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.data.totalStudents !== undefined, 'Invalid engagement data');
   });
 
   await runTest('Get Monthly Stats', async () => {
     const res = await request('GET', '/api/analytics/monthly?year=2024', null, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.data.monthlyData, 'Monthly data not returned');
   });
@@ -326,7 +326,7 @@ async function runAllTests() {
       department: 'CS',
       year: '2024'
     });
-    
+
     assert(res.status === 400, `Expected 400, got ${res.status}`);
   });
 
@@ -336,7 +336,7 @@ async function runAllTests() {
       email: 'test@example.com',
       password: 'weak'
     });
-    
+
     assert(res.status === 400, `Expected 400, got ${res.status}`);
   });
 
@@ -346,13 +346,13 @@ async function runAllTests() {
       date: '2020-01-01',
       location: 'Auditorium'
     }, adminToken);
-    
+
     assert(res.status === 400, `Expected 400, got ${res.status}`);
   });
 
   await runTest('Reject Invalid MongoDB ID', async () => {
     const res = await request('GET', '/api/events/invalid-id-123');
-    
+
     assert(res.status === 400, `Expected 400, got ${res.status}`);
   });
 
@@ -363,19 +363,19 @@ async function runAllTests() {
 
   await runTest('Reject Request Without Token', async () => {
     const res = await request('GET', '/api/admin/profile');
-    
+
     assert(res.status === 401, `Expected 401, got ${res.status}`);
   });
 
   await runTest('Reject Invalid Token', async () => {
     const res = await request('GET', '/api/admin/profile', null, 'invalid-token-12345');
-    
+
     assert(res.status === 401, `Expected 401, got ${res.status}`);
   });
 
   await runTest('Admin Logout', async () => {
     const res = await request('POST', '/api/auth/logout', null, adminToken);
-    
+
     assert(res.status === 200, `Expected 200, got ${res.status}`);
   });
 
@@ -395,7 +395,7 @@ async function runAllTests() {
     console.log(`${colors.red}╔════════════════════════════════════════════════╗${colors.reset}`);
     console.log(`${colors.red}║                FAILED TESTS                    ║${colors.reset}`);
     console.log(`${colors.red}╚════════════════════════════════════════════════╝${colors.reset}\n`);
-    
+
     results.errors.forEach((err, index) => {
       console.log(`${colors.red}${index + 1}. ${err.test}${colors.reset}`);
       console.log(`   Error: ${err.error}\n`);
