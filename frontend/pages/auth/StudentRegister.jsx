@@ -26,7 +26,16 @@ const StudentRegister = () => {
             alert('Registration successful! Please login.');
             navigate('/login/student');
         } catch (error) {
-            alert('Registration failed. Try again.');
+            console.error("Registration Error:", error);
+            const res = error.response?.data;
+            if (res?.details) {
+                // If it's a validation error (array of issues)
+                const messages = res.details.map(d => `• ${d.message}`).join('\n');
+                alert(`Please fix the following:\n${messages}`);
+            } else {
+                // If it's a generic error (like duplicate email)
+                alert(res?.error || 'Registration failed. Please check your connection.');
+            }
         } finally {
             setLoading(false);
         }

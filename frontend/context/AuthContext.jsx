@@ -7,22 +7,35 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check local storage for persisted session mock
-        const storedUser = localStorage.getItem('uni_user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+        const token = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
+        const storedRole = localStorage.getItem('role');
+
+        if (token && storedUser) {
+            const parsedUser = JSON.parse(storedUser);
+            // Ensure role is attached to user object for convenience
+            setUser({ ...parsedUser, role: storedRole });
         }
         setLoading(false);
     }, []);
 
-    const login = (userData) => {
-        setUser(userData);
-        localStorage.setItem('uni_user', JSON.stringify(userData));
+    const login = (userData, role = 'student') => { // Default to student if not provided
+        const userWithRole = { ...userData, role };
+        setUser(userWithRole);
+        // localStorage is already handled in api.js, but good to be safe or if context used independently
+        // ideally api.js handles API calls and context handles state. 
+        // But since api.js writes to LS, context should just update state.
+
+        // However, api.js calls return the user object. Component calls login(user).
+        // We should update the component calls to pass role, OR infer it.
     };
 
     const logout = () => {
         setUser(null);
-        localStorage.removeItem('uni_user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('role');
+        localStorage.removeItem('uni_user'); // Clean up old mock key
     };
 
     return (
