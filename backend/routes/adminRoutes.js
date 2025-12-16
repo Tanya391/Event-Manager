@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const {
   getAdminProfile,
+  updateAdminProfile,
   createAnnouncementAsAdmin,
   listAnnouncementsForAdmin,
   getAllStudents,
@@ -22,6 +23,9 @@ const {
 // All admin routes require admin authentication
 // Admin Profile
 router.get("/profile", verifyAdmin, getAdminProfile);
+
+const upload = require("../middlewares/uploadMiddleware");
+router.put("/profile", verifyAdmin, upload.single('profileImage'), validateUpdateProfile, updateAdminProfile);
 
 // Admin Announcements
 router.post("/announcements", verifyAdmin, validateCreateAnnouncement, createAnnouncementAsAdmin);

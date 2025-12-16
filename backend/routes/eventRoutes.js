@@ -38,15 +38,17 @@ router.get("/:id", validateMongoId('id'), getEventById);
 // Register for an event (student only)
 router.post("/:id/register", verifyStudent, validateMongoId('id'), registerForEvent);
 
+const upload = require("../middlewares/uploadMiddleware");
+
 // ============================================
 // ADMIN ROUTES
 // ============================================
 
 // Create new event (admin only)
-router.post("/", verifyAdmin, validateCreateEvent, createEvent);
+router.post("/", verifyAdmin, upload.single('image'), validateCreateEvent, createEvent);
 
 // Update event (admin only)
-router.put("/:id", verifyAdmin, validateMongoId('id'), validateUpdateEvent, updateEvent);
+router.put("/:id", verifyAdmin, upload.single('image'), validateMongoId('id'), validateUpdateEvent, updateEvent);
 
 // Delete event (admin only)
 router.delete("/:id", verifyAdmin, validateMongoId('id'), deleteEvent);

@@ -24,6 +24,7 @@ app.use(cors());
 app.use(express.json()); // Parse JSON request bodies
 app.use(helmet());
 app.disable("x-powered-by");
+app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
 
 // Connect Database
 connectDB();
@@ -62,10 +63,23 @@ app.use("/api/events", eventRoutes);
 app.use("/api/announcements", announcementRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
-// Health Check Route
-app.get("/", (req, res) => {
-  res.send("College Management Portal Backend Running ✔");
-});
+const path = require('path');
+
+// Serve Frontend in Production
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+  // Any route that is not API route will be handled by React
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../frontend', 'dist', 'index.html'));
+  });
+} else {
+  // Health Check Route (Dev only)
+  app.get("/", (req, res) => {
+    res.send("College Management Portal Backend Running ✔");
+  });
+}
 
 // Global Error Handler (Optional but recommended)
 app.use((err, req, res, next) => {

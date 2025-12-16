@@ -16,6 +16,8 @@ const {
 // All student routes require student authentication
 router.get("/profile", verifyStudent, getMyProfile);
 router.get("/registrations", verifyStudent, getMyRegistrations);
-router.put("/profile", verifyStudent, validateUpdateProfile, updateMyProfile);
+
+const upload = require("../middlewares/uploadMiddleware");
+router.put("/profile", verifyStudent, upload.single('profileImage'), validateUpdateProfile, updateMyProfile);
 
 module.exports = router;

@@ -6,7 +6,7 @@ const Event = require('../models/Event');
 exports.getMyProfile = async (req, res) => {
   try {
     const studentId = req.student._id;
-    
+
     const student = await Student.findById(studentId).select('-__v');
     if (!student) return res.status(404).json({ error: 'Student not found' });
 
@@ -20,7 +20,7 @@ exports.getMyProfile = async (req, res) => {
 exports.getMyRegistrations = async (req, res) => {
   try {
     const student = req.student;
-    
+
     // find events where participants array contains this student's studentId or email
     const events = await Event.find({
       $or: [
@@ -45,6 +45,10 @@ exports.updateMyProfile = async (req, res) => {
     if (name) student.name = name;
     if (department) student.department = department;
     if (year) student.year = year;
+
+    if (req.file) {
+      student.profileImage = req.file.path.replace(/\\/g, "/");
+    }
 
     await student.save();
     res.json({ message: 'Profile updated', student });

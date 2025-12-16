@@ -20,7 +20,8 @@ const studentSchema = new mongoose.Schema(
 
     // useful for dashboard
     department: String,
-    year: String
+    year: String,
+    profileImage: { type: String, default: "" }
   },
   { timestamps: true }
 );

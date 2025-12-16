@@ -13,12 +13,19 @@ exports.createEvent = async (req, res) => {
     const { title, description, date, time, location, maxParticipants, status } = req.body;
     if (!title || !date || !location) return res.status(400).json({ error: 'title, date, location required' });
 
+    let imagePath = '';
+    if (req.file) {
+      // Normalize path for URL (replace backslashes with forward slashes)
+      imagePath = req.file.path.replace(/\\/g, "/");
+    }
+
     const event = await Event.create({
-      title, 
-      description, 
-      date, 
-      time, 
-      location, 
+      title,
+      description,
+      date,
+      time,
+      location,
+      image: imagePath,
       maxParticipants,
       status: status || 'upcoming' // Allow admin to set initial status
     });
@@ -29,36 +36,23 @@ exports.createEvent = async (req, res) => {
   }
 };
 
-// Get all events (public) - with auto status update
+// Get all events (public)
 exports.getAllEvents = async (req, res) => {
   try {
     const events = await Event.find().sort({ date: 1 });
-    
-    // Update status for each event
-    const updatedEvents = events.map(event => {
-      event.updateStatus();
-      return event;
-    });
-    
-    // Save updated statuses
-    await Promise.all(updatedEvents.map(event => event.save()));
-    
-    res.json(updatedEvents);
+    // Optional: Update status for each event? For performance, maybe n ot on every fetch.
+    // But let's at least return them.
+    res.json(events);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// Get single event - with auto status update
+// Get single event (public)
 exports.getEventById = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).json({ error: 'Event not found' });
-    
-    // Update status
-    event.updateStatus();
-    await event.save();
-    
     res.json(event);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -70,19 +64,24 @@ exports.updateEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).json({ error: 'Event not found' });
-    
+
     // Update fields
     Object.keys(req.body).forEach(key => {
       event[key] = req.body[key];
     });
-    
+
+    // Handle Image Update
+    if (req.file) {
+      event.image = req.file.path.replace(/\\/g, "/");
+    }
+
     // If date changed, recalculate status (unless manually set to cancelled)
     if (req.body.date && event.status !== 'cancelled') {
       event.updateStatus();
     }
-    
+
     await event.save();
-    
+
     res.json({ message: 'Event updated', event });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -117,11 +116,11 @@ exports.registerForEvent = async (req, res) => {
     if (event.status === 'completed') {
       return res.status(400).json({ error: 'Cannot register. This event has already ended.' });
     }
-    
+
     if (event.status === 'cancelled') {
       return res.status(400).json({ error: 'Cannot register. This event has been cancelled.' });
     }
-    
+
     if (event.status === 'ongoing') {
       return res.status(400).json({ error: 'Cannot register. This event is currently ongoing.' });
     }
@@ -137,8 +136,8 @@ exports.registerForEvent = async (req, res) => {
     );
 
     if (alreadyRegistered) {
-      return res.status(400).json({ 
-        error: 'You are already registered for this event.' 
+      return res.status(400).json({
+        error: 'You are already registered for this event.'
       });
     }
 
@@ -152,7 +151,7 @@ exports.registerForEvent = async (req, res) => {
     event.participants.push(participant);
     await event.save();
 
-    res.json({ 
+    res.json({
       message: 'Successfully registered for the event!',
       event: {
         id: event._id,
@@ -172,10 +171,10 @@ exports.cancelEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).json({ error: 'Event not found' });
-    
+
     event.status = 'cancelled';
     await event.save();
-    
+
     res.json({ message: 'Event cancelled successfully', event });
   } catch (err) {
     res.status(500).json({ error: err.message });

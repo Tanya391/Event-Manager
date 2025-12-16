@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { announcementAPI } from '../../services/api';
+import { announcementAPI, eventAPI } from '../../services/api';
 import AnnouncementCard from '../../components/AnnouncementCard';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { Plus } from 'lucide-react';
 
 const ManageAnnouncements = () => {
     const [announcements, setAnnouncements] = useState([]);
+    const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
-    const [formData, setFormData] = useState({ title: '', message: '', author: 'Admin' });
+    const [formData, setFormData] = useState({ title: '', message: '', author: 'Admin', relatedEvent: '' });
 
     useEffect(() => {
         fetchData();
@@ -16,8 +17,12 @@ const ManageAnnouncements = () => {
 
     const fetchData = async () => {
         try {
-            const data = await announcementAPI.getAll();
-            setAnnouncements(data);
+            const [announcementsData, eventsData] = await Promise.all([
+                announcementAPI.getAll(),
+                eventAPI.getAll()
+            ]);
+            setAnnouncements(announcementsData);
+            setEvents(eventsData);
         } catch (error) {
             console.error(error);
         } finally {
@@ -40,7 +45,10 @@ const ManageAnnouncements = () => {
         try {
             await announcementAPI.create({ ...formData, date: new Date().toISOString() });
             setIsCreating(false);
-            setFormData({ title: '', message: '', author: 'Admin' });
+            await announcementAPI.create({ ...formData, date: new Date().toISOString() });
+            setIsCreating(false);
+            setFormData({ title: '', message: '', author: 'Admin', relatedEvent: '' });
+            fetchData();
             fetchData();
         } catch (error) {
             alert('Failed to post announcement');
@@ -65,6 +73,18 @@ const ManageAnnouncements = () => {
             {isCreating && (
                 <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg mb-8 border border-gray-200 dark:border-slate-700 animate-fade-in-down">
                     <form onSubmit={handleCreate} className="space-y-4">
+                        <select
+                            className="w-full p-2 border rounded dark:bg-slate-700 dark:text-white"
+                            value={formData.relatedEvent}
+                            onChange={e => setFormData({ ...formData, relatedEvent: e.target.value })}
+                        >
+                            <option value="">General Announcement (No specific event)</option>
+                            {events.map(event => (
+                                <option key={event.id || event._id} value={event.id || event._id}>
+                                    Regarding: {event.title}
+                                </option>
+                            ))}
+                        </select>
                         <input required placeholder="Announcement Title" className="w-full p-2 border rounded dark:bg-slate-700 dark:text-white" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
                         <textarea required placeholder="Content" className="w-full p-2 border rounded dark:bg-slate-700 dark:text-white" rows="3" value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })}></textarea>
                         <button type="submit" className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors">Post Announcement</button>

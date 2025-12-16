@@ -47,8 +47,8 @@ const Navbar = () => {
                         {/* Portal Indicator */}
                         {isAuthenticated && (
                             <div className={`hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${isAdmin
-                                    ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800'
-                                    : 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-800'
+                                ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800'
+                                : 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-800'
                                 }`}>
                                 {isAdmin ? <ShieldCheck className="w-3 h-3 mr-1" /> : <GraduationCap className="w-3 h-3 mr-1" />}
                                 {isAdmin ? 'Admin Portal' : 'Student Portal'}
@@ -82,6 +82,9 @@ const Navbar = () => {
                                 </NavLink>
                                 <NavLink to="/admin/announcements" className={navLinkClass}>
                                     <Bell className="w-4 h-4 mr-1.5" /> Announcements
+                                </NavLink>
+                                <NavLink to="/admin/profile" className={navLinkClass}>
+                                    <User className="w-4 h-4 mr-1.5" /> Profile
                                 </NavLink>
                             </>
                         )}
@@ -152,8 +155,8 @@ const Navbar = () => {
                         {isAuthenticated && (
                             <div className="px-3 py-2 mb-2 flex items-center">
                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${isAdmin
-                                        ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800'
-                                        : 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-800'
+                                    ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800'
+                                    : 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-800'
                                     }`}>
                                     {isAdmin ? <ShieldCheck className="w-3 h-3 mr-1" /> : <GraduationCap className="w-3 h-3 mr-1" />}
                                     {isAdmin ? 'Admin Portal' : 'Student Portal'}
@@ -174,6 +177,7 @@ const Navbar = () => {
                                 <NavLink to="/admin/events" onClick={toggleMenu} className={mobileNavLinkClass}>Events</NavLink>
                                 <NavLink to="/admin/students" onClick={toggleMenu} className={mobileNavLinkClass}>Students</NavLink>
                                 <NavLink to="/admin/announcements" onClick={toggleMenu} className={mobileNavLinkClass}>Announcements</NavLink>
+                                <NavLink to="/admin/profile" onClick={toggleMenu} className={mobileNavLinkClass}>Profile</NavLink>
                             </>
                         )}
 

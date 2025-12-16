@@ -97,7 +97,7 @@ async function runAllTests() {
 
   await runTest('Admin Login', async () => {
     const res = await request('POST', '/api/auth/admin/login', {
-      email: 'tanyachill@gmail.com',
+      email: 'tanyachill101@gmail.com',
       password: 'Admin@123!'
     });
 

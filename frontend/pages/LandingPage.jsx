@@ -1,9 +1,27 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Users, BarChart3, ShieldCheck, GraduationCap, ArrowRight, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { Calendar, Users, BarChart3, ShieldCheck, GraduationCap, ArrowRight, ChevronDown, ChevronUp, Sparkles, Bell } from 'lucide-react';
+import { announcementAPI } from '../services/api';
 
 const LandingPage = () => {
     const [openFaqIndex, setOpenFaqIndex] = useState(null);
+
+    const [announcements, setAnnouncements] = useState([]);
+    const [loadingAnnouncements, setLoadingAnnouncements] = useState(true);
+
+    React.useEffect(() => {
+        const fetchAnnouncements = async () => {
+            try {
+                const data = await announcementAPI.getAll();
+                setAnnouncements(data.slice(0, 3)); // Show top 3
+            } catch (error) {
+                console.error("Failed to fetch public announcements", error);
+            } finally {
+                setLoadingAnnouncements(false);
+            }
+        };
+        fetchAnnouncements();
+    }, []);
 
     const toggleFaq = (index) => {
         setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -188,6 +206,39 @@ const LandingPage = () => {
                 </div>
             </section>
 
+            {/* Latest Announcements Section */}
+            <section className="py-24 bg-indigo-50 dark:bg-slate-800/50 transition-colors duration-300">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">Latest Announcements</h2>
+                        <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">Stay updated with campus news</p>
+                    </div>
+
+                    {loadingAnnouncements ? (
+                        <div className="text-center text-gray-500">Loading updates...</div>
+                    ) : announcements.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {announcements.map((announcement) => (
+                                <div key={announcement.id || announcement._id} className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 dark:border-slate-700">
+                                    <div className="flex items-center mb-4">
+                                        <Bell className="w-5 h-5 text-indigo-500 mr-2" />
+                                        <span className="text-xs font-semibold uppercase tracking-wider text-indigo-500">
+                                            {new Date(announcement.createdAt || Date.now()).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{announcement.title}</h3>
+                                    <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">
+                                        {announcement.message}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-center text-gray-500 dark:text-gray-400">No recent announcements.</p>
+                    )}
+                </div>
+            </section>
+
             {/* FAQ Section */}
             <section className="py-24 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -201,8 +252,8 @@ const LandingPage = () => {
                             <div
                                 key={idx}
                                 className={`bg-white dark:bg-slate-900 rounded-xl overflow-hidden border transition-all duration-300 ${openFaqIndex === idx
-                                        ? 'border-indigo-500 dark:border-indigo-500 shadow-md ring-1 ring-indigo-500'
-                                        : 'border-gray-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700'
+                                    ? 'border-indigo-500 dark:border-indigo-500 shadow-md ring-1 ring-indigo-500'
+                                    : 'border-gray-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700'
                                     }`}
                             >
                                 <button

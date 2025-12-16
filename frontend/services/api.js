@@ -118,6 +118,7 @@ export const userAPI = {
     },
 
     updateProfile: async (data) => {
+        // Axios automatically handles Content-Type for FormData
         const response = await api.put('/students/profile', data);
         return response.data;
     },
@@ -130,6 +131,17 @@ export const userAPI = {
     getAllStudents: async () => {
         const response = await api.get('/admin/students');
         return response.data.students; // Backend returns { students: [] }
+    }
+};
+
+export const adminAPI = {
+    getProfile: async () => {
+        const response = await api.get('/admin/profile');
+        return response.data;
+    },
+    updateProfile: async (data) => {
+        const response = await api.put('/admin/profile', data);
+        return response.data;
     }
 };
 

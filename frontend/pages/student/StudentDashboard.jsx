@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { eventAPI, announcementAPI } from '../../services/api';
+import { eventAPI, announcementAPI, userAPI } from '../../services/api';
 import EventCard from '../../components/EventCard';
 import AnnouncementCard from '../../components/AnnouncementCard';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -17,10 +17,10 @@ const StudentDashboard = () => {
         const fetchData = async () => {
             try {
                 const [eventsData, announcementsData] = await Promise.all([
-                    eventAPI.getAll(),
+                    userAPI.getRegistrations(), // Fetch only registered events
                     announcementAPI.getAll()
                 ]);
-                setEvents(eventsData.slice(0, 3)); // Show top 3 events
+                setEvents(eventsData);
                 setAnnouncements(announcementsData);
             } catch (error) {
                 console.error("Failed to fetch dashboard data", error);
@@ -32,17 +32,7 @@ const StudentDashboard = () => {
         fetchData();
     }, []);
 
-    const handleRegister = async (event) => {
-        try {
-            await eventAPI.register(event.id, user.id);
-            alert(`Successfully registered for ${event.title}!`);
-            // Refresh events to update counts
-            const updatedEvents = await eventAPI.getAll();
-            setEvents(updatedEvents.slice(0, 3));
-        } catch (error) {
-            alert('Registration failed. You might already be registered.');
-        }
-    };
+
 
     if (loading) return <LoadingSpinner />;
 
@@ -61,7 +51,7 @@ const StudentDashboard = () => {
                 {/* Left Column: Events */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Upcoming Events</h2>
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">My Registered Events</h2>
                         <button
                             onClick={() => navigate('/student/events')}
                             className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 font-medium text-sm"
@@ -75,13 +65,14 @@ const StudentDashboard = () => {
                             <EventCard
                                 key={event.id}
                                 event={event}
-                                onAction={handleRegister}
-                                actionLabel="Register Now"
+                                onAction={null}
+                                actionLabel="Registered"
+                                actionDisabled={true}
                             />
                         ))}
                     </div>
                     {events.length === 0 && (
-                        <p className="text-gray-500 dark:text-gray-400">No upcoming events found.</p>
+                        <p className="text-gray-500 dark:text-gray-400">You haven't registered for any events yet.</p>
                     )}
                 </div>
 

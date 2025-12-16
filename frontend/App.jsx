@@ -19,6 +19,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageEvents from './pages/admin/ManageEvents';
 import ManageStudents from './pages/admin/ManageStudents';
 import ManageAnnouncements from './pages/admin/ManageAnnouncements';
+import AdminProfile from './pages/admin/AdminProfile';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, role }) => {
@@ -38,58 +39,63 @@ const ProtectedRoute = ({ children, role }) => {
 };
 
 const AppRoutes = () => {
-    return (
-        <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login/admin" element={<AdminLogin />} />
-            <Route path="/login/student" element={<StudentLogin />} />
-            <Route path="/register" element={<StudentRegister />} />
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login/admin" element={<AdminLogin />} />
+      <Route path="/login/student" element={<StudentLogin />} />
+      <Route path="/register" element={<StudentRegister />} />
 
-            {/* Student Routes */}
-            <Route path="/student" element={
-                <ProtectedRoute role="student">
-                    <StudentDashboard />
-                </ProtectedRoute>
-            } />
-            <Route path="/student/events" element={
-                <ProtectedRoute role="student">
-                    <EventsPage />
-                </ProtectedRoute>
-            } />
-            <Route path="/student/registrations" element={
-                <ProtectedRoute role="student">
-                    <MyRegistrations />
-                </ProtectedRoute>
-            } />
-             <Route path="/student/profile" element={
-                <ProtectedRoute role="student">
-                    <ProfilePage />
-                </ProtectedRoute>
-            } />
+      {/* Student Routes */}
+      <Route path="/student" element={
+        <ProtectedRoute role="student">
+          <StudentDashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/student/events" element={
+        <ProtectedRoute role="student">
+          <EventsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/student/registrations" element={
+        <ProtectedRoute role="student">
+          <MyRegistrations />
+        </ProtectedRoute>
+      } />
+      <Route path="/student/profile" element={
+        <ProtectedRoute role="student">
+          <ProfilePage />
+        </ProtectedRoute>
+      } />
 
-            {/* Admin Routes */}
-            <Route path="/admin" element={
-                <ProtectedRoute role="admin">
-                    <AdminDashboard />
-                </ProtectedRoute>
-            } />
-            <Route path="/admin/events" element={
-                <ProtectedRoute role="admin">
-                    <ManageEvents />
-                </ProtectedRoute>
-            } />
-            <Route path="/admin/students" element={
-                <ProtectedRoute role="admin">
-                    <ManageStudents />
-                </ProtectedRoute>
-            } />
-            <Route path="/admin/announcements" element={
-                <ProtectedRoute role="admin">
-                    <ManageAnnouncements />
-                </ProtectedRoute>
-            } />
-        </Routes>
-    )
+      {/* Admin Routes */}
+      <Route path="/admin" element={
+        <ProtectedRoute role="admin">
+          <AdminDashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/profile" element={
+        <ProtectedRoute role="admin">
+          <AdminProfile />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/events" element={
+        <ProtectedRoute role="admin">
+          <ManageEvents />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/students" element={
+        <ProtectedRoute role="admin">
+          <ManageStudents />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/announcements" element={
+        <ProtectedRoute role="admin">
+          <ManageAnnouncements />
+        </ProtectedRoute>
+      } />
+    </Routes>
+  )
 }
 
 const App = () => {

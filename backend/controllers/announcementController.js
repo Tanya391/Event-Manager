@@ -30,6 +30,7 @@ exports.createAnnouncement = async (req, res) => {
     const announcement = await Announcement.create({
       title,
       message,
+      relatedEvent: req.body.relatedEvent || null,
       createdBy: req.admin._id,
       expiresAt: expiryDate,
     });
@@ -45,7 +46,7 @@ exports.createAnnouncement = async (req, res) => {
     setImmediate(async () => {
       try {
         const students = await Student.find();
-        
+
         // Send emails one by one with error handling
         for (const student of students) {
           try {
@@ -61,7 +62,7 @@ exports.createAnnouncement = async (req, res) => {
             console.error(`❌ Failed to send email to ${student.email}:`, emailError.message);
           }
         }
-        
+
         console.log(`📧 Finished sending announcement emails for: "${announcement.title}"`);
       } catch (err) {
         console.error('❌ Error in background email sending:', err.message);
@@ -83,6 +84,7 @@ exports.getAllAnnouncements = async (req, res) => {
       $or: [{ expiresAt: null }, { expiresAt: { $gte: now } }],
     })
       .populate("createdBy", "name email")
+      .populate("relatedEvent", "title date")
       .sort({ createdAt: -1 });
 
     res.json(announcements);

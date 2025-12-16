@@ -15,6 +15,12 @@ const announcementSchema = new mongoose.Schema(
       required: true,
     },
 
+    relatedEvent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
+      default: null
+    },
+
     expiresAt: { type: Date } // optional expiry
   },
   { timestamps: true }

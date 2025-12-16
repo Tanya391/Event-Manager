@@ -20,6 +20,28 @@ exports.getAdminProfile = async (req, res) => {
   }
 };
 
+// Update Admin Profile (NEW)
+exports.updateAdminProfile = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin._id);
+    if (!admin) return res.status(404).json({ error: 'Admin not found' });
+
+    const { name } = req.body;
+    if (name) admin.name = name;
+
+    if (req.file) {
+      admin.profileImage = req.file.path.replace(/\\/g, "/");
+    }
+
+    await admin.save();
+    // Return without password
+    const adminResponse = await Admin.findById(admin._id).select('-password');
+    res.json({ message: 'Profile updated', admin: adminResponse });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // ============================================
 // ADMIN ANNOUNCEMENT OPERATIONS
 // ============================================
@@ -67,7 +89,7 @@ exports.getStudentById = async (req, res) => {
   try {
     const student = await Student.findById(req.params.id).select('-__v');
     if (!student) return res.status(404).json({ error: 'Student not found' });
-    
+
     res.json({ student });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -78,7 +100,7 @@ exports.getStudentById = async (req, res) => {
 exports.updateStudent = async (req, res) => {
   try {
     const { name, email, studentId, department, year } = req.body;
-    
+
     const student = await Student.findById(req.params.id);
     if (!student) return res.status(404).json({ error: 'Student not found' });
 
@@ -87,9 +109,9 @@ exports.updateStudent = async (req, res) => {
     if (studentId) student.studentId = studentId;
     if (department) student.department = department;
     if (year) student.year = year;
-    
+
     await student.save();
-    
+
     res.json({ message: 'Student updated successfully', student });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -101,7 +123,7 @@ exports.deleteStudent = async (req, res) => {
   try {
     const student = await Student.findByIdAndDelete(req.params.id);
     if (!student) return res.status(404).json({ error: 'Student not found' });
-    
+
     res.json({ message: 'Student deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });

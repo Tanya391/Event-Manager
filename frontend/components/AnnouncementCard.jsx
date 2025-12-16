@@ -27,6 +27,11 @@ const AnnouncementCard = ({ announcement, isAdmin, onDelete }) => {
                 <Bell className="w-4 h-4 mr-2 text-indigo-500" />
                 {announcement.title}
             </h4>
+            {announcement.relatedEvent && (
+                <div className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded inline-block text-xs font-semibold mb-2">
+                    Regarding: {announcement.relatedEvent.title || 'Event'}
+                </div>
+            )}
             <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
                 {announcement.message}
             </p>

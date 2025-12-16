@@ -34,7 +34,7 @@ const StudentLogin = () => {
         setError('');
         try {
             const user = await authAPI.studentLoginStep2(email, otp);
-            login(user);
+            login(user, 'student');
             navigate('/student');
         } catch (err) {
             setError('Invalid OTP. Try 1234');
@@ -109,10 +109,10 @@ const StudentLogin = () => {
                                 value={otp}
                                 onChange={(e) => setOtp(e.target.value)}
                                 className="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 dark:border-slate-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-slate-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center tracking-widest text-2xl"
-                                placeholder="• • • •"
-                                maxLength={4}
+                                placeholder="• • • • • •"
+                                maxLength={6}
                             />
-                            <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">Hint: Use 1234</p>
+                            <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">Enter the 6-digit code sent to your email</p>
                         </div>
 
                         <button
